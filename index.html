@@ -234,7 +234,7 @@
             x: CANVAS_WIDTH / 2,
             y: CANVAS_HEIGHT / 2,
             radius: 16,
-            speed: 6.5,
+            speed: 4.5, // 이동 속도 감소 (6.5 -> 4.5)
             angle: -Math.PI / 2, // Default facing UP
             dodgeCharges: 1,
             isInvincible: false,
@@ -304,9 +304,15 @@
             // Visual Knob Position
             joystickKnob.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
 
-            // Normalized Velocity Input Vector (-1 to 1)
-            joystickInput.x = deltaX / maxRadius;
-            joystickInput.y = deltaY / maxRadius;
+            // Normalized Velocity Input Vector (-1 to 1) with minor dampening & deadzone for better precision
+            let normX = deltaX / maxRadius;
+            let normY = deltaY / maxRadius;
+            const deadzone = 0.08;
+            if (Math.abs(normX) < deadzone) normX = 0;
+            if (Math.abs(normY) < deadzone) normY = 0;
+
+            joystickInput.x = normX * 0.85; // 감도 85% 수준으로 완화
+            joystickInput.y = normY * 0.85;
         }
 
         function resetJoystick() {
@@ -586,10 +592,10 @@
                     items.splice(i, 1);
                 }
             }
-
-            // --- STEEP DIFFICULTY SCALING ---
-            const speedMultiplier = 1 + (elapsedTime / 18) ** 1.6;
-            const spawnInterval = Math.max(3, 22 - Math.floor(elapsedTime * 0.35));
+            // --- DIFFICULTY SCALING (Smooth initial curve) ---
+            // 초반 속도 증가 곡선을 조금 부드럽게 조정
+            const speedMultiplier = 1 + (elapsedTime / 22) ** 1.4;
+            const spawnInterval = Math.max(4, 25 - Math.floor(elapsedTime * 0.3));
 
             spawnTimer++;
             if (spawnTimer >= spawnInterval) {
@@ -597,28 +603,28 @@
                 
                 const side = Math.floor(Math.random() * 4);
                 let bx, by, bvx, bvy;
-                const baseSpeed = (Math.random() * 2.5 + 3.5) * speedMultiplier;
+                const baseSpeed = (Math.random() * 1.8 + 2.2) * speedMultiplier; // 초기 총알 속도 감소 (3.5+2.5 -> 2.2+1.8)
 
                 if (side === 0) {
                     bx = Math.random() * CANVAS_WIDTH;
                     by = -15;
-                    bvx = (Math.random() - 0.5) * 3 * speedMultiplier;
+                    bvx = (Math.random() - 0.5) * 2 * speedMultiplier;
                     bvy = baseSpeed;
                 } else if (side === 1) {
                     bx = Math.random() * CANVAS_WIDTH;
                     by = CANVAS_HEIGHT + 15;
-                    bvx = (Math.random() - 0.5) * 3 * speedMultiplier;
+                    bvx = (Math.random() - 0.5) * 2 * speedMultiplier;
                     bvy = -baseSpeed;
                 } else if (side === 2) {
                     bx = -15;
                     by = Math.random() * CANVAS_HEIGHT;
                     bvx = baseSpeed;
-                    bvy = (Math.random() - 0.5) * 3 * speedMultiplier;
+                    bvy = (Math.random() - 0.5) * 2 * speedMultiplier;
                 } else {
                     bx = CANVAS_WIDTH + 15;
                     by = Math.random() * CANVAS_HEIGHT;
                     bvx = -baseSpeed;
-                    bvy = (Math.random() - 0.5) * 3 * speedMultiplier;
+                    bvy = (Math.random() - 0.5) * 2 * speedMultiplier;
                 }
 
                 bullets.push({
