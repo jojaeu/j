@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Save the Car</title>
+    <title>1-Min Retro Car Dodge</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts -->
@@ -46,12 +46,12 @@
             <span id="timerDisplay" class="pixel-font text-xl sm:text-2xl text-yellow-300 neon-text-cyan">0.00s</span>
         </div>
         
-        <!-- Shield Skill UI Indicator -->
+        <!-- Dodge Skill UI Indicator -->
         <div class="flex flex-col items-end">
             <span class="text-xs text-pink-400 font-bold uppercase tracking-wider">Special Skill</span>
-            <div id="ShieldBadge" class="mt-1 px-3 py-1 text-xs font-bold rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-400/50 flex items-center gap-1.5 transition-all">
-                <span id="ShieldDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span id="ShieldBadgeText" class="pixel-font text-[10px]">Shield [x1]</span>
+            <div id="dodgeBadge" class="mt-1 px-3 py-1 text-xs font-bold rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-400/50 flex items-center gap-1.5 transition-all">
+                <span id="dodgeDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span id="dodgeBadgeText" class="pixel-font text-[10px]">SHIELD [x1]</span>
             </div>
         </div>
     </header>
@@ -70,8 +70,8 @@
 
             <div class="bg-slate-900/80 border border-slate-700 rounded-lg p-3 mb-6 w-full max-w-xs text-xs text-slate-400 space-y-1 text-left">
                 <p>⚡ <strong class="text-slate-200">조작법:</strong> 방향키 (이동)</p>
-                <p>🛡️ <strong class="text-slate-200">회피(무적 1초):</strong> 스페이스 바</p>
-                <p>🛡️ <strong class="text-cyan-300">방패 아이템:</strong> 10초마다 출현 (회피 +1 충전)</p>
+                <p>🛡️ <strong class="text-slate-200">방패(무적 1초):</strong> 스페이스 바</p>
+                <p>🛡️ <strong class="text-cyan-300">방패 아이템:</strong> 10초마다 출현 (방패 +1 충전)</p>
             </div>
 
             <button id="startBtn" class="pixel-font px-6 py-4 bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-400 hover:to-rose-500 text-white rounded-xl shadow-lg shadow-pink-500/40 transform active:scale-95 transition-all cursor-pointer">
@@ -119,7 +119,7 @@
         <!-- Big Touch Dodge Button -->
         <button id="btnDodge" class="touch-btn flex-1 h-36 sm:h-40 bg-gradient-to-br from-pink-600 to-purple-700 border-2 border-pink-400 active:from-pink-400 active:to-purple-500 rounded-xl flex flex-col items-center justify-center gap-1 shadow-lg shadow-pink-500/20 cursor-pointer">
             <span class="text-2xl sm:text-3xl">🛡️</span>
-            <span class="pixel-font text-xs sm:text-sm text-white font-bold">DODGE</span>
+            <span class="pixel-font text-xs sm:text-sm text-white font-bold">SHIELD</span>
             <span id="btnDodgeSubText" class="text-[10px] text-pink-200/80">(충전: 1회)</span>
         </button>
     </footer>
@@ -316,12 +316,12 @@
             const count = player.dodgeCharges;
             if (count > 0) {
                 dodgeBadge.className = "mt-1 px-3 py-1 text-xs font-bold rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-400/50 flex items-center gap-1.5";
-                dodgeBadgeText.innerText = `DODGE [x${count}]`;
+                dodgeBadgeText.innerText = `SHIELD [x${count}]`;
                 dodgeDot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
                 if (btnDodgeSubText) btnDodgeSubText.innerText = `(충전: ${count}회)`;
             } else {
                 dodgeBadge.className = "mt-1 px-3 py-1 text-xs font-bold rounded-md bg-slate-800 text-slate-500 border border-slate-700 flex items-center gap-1.5 opacity-60";
-                dodgeBadgeText.innerText = "DODGE [x0]";
+                dodgeBadgeText.innerText = "SHIELD [x0]";
                 dodgeDot.className = "w-2 h-2 rounded-full bg-slate-500";
                 if (btnDodgeSubText) btnDodgeSubText.innerText = "(충전: 0회)";
             }
