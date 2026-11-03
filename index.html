@@ -71,17 +71,34 @@
                 <p>🛡️ <strong class="text-cyan-300">실드(1초 무적):</strong> 스페이스바, 10초마다 출현</p>
             </div>
 
+            <!-- Volume Slider Container -->
+            <div class="w-full max-w-xs bg-slate-900/90 border border-cyan-500/30 rounded-xl p-3 mb-6 flex flex-col gap-1.5 text-xs text-left shadow-inner">
+                <div class="flex justify-between items-center">
+                    <span class="text-cyan-400 font-bold flex items-center gap-1.5">
+                        🔊 <span class="pixel-font text-[10px]">MASTER VOLUME</span>
+                    </span>
+                    <span id="volumeValue" class="pixel-font text-yellow-300 text-[10px]">80%</span>
+                </div>
+                <input id="volumeSlider" type="range" min="0" max="100" value="80" 
+                    class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-pink-500 focus:outline-none">
+            </div>
+
             <button id="startBtn" class="pixel-font px-6 py-4 bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-400 hover:to-rose-500 text-white rounded-xl shadow-lg shadow-pink-500/40 transform active:scale-95 transition-all cursor-pointer">
                 START GAME
             </button>
         </div>
 
+        <!-- Countdown Overlay -->
+        <div id="countdownOverlay" class="absolute inset-0 bg-slate-950/80 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center z-30 hidden">
+            <span id="countdownText" class="pixel-font text-6xl text-yellow-300 neon-text-cyan animate-ping">3</span>
+        </div>
+
         <!-- Game Over Overlay -->
         <div id="gameOverOverlay" class="absolute inset-0 bg-slate-950/95 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center z-20 hidden">
             <h2 class="pixel-font text-2xl sm:text-3xl text-red-500 mb-2 animate-bounce">GAME OVER</h2>
-            <p class="text-slate-400 text-xs sm:text-sm mb-4">총알에 맞았습니다!</p>
+            <p class="text-slate-400 text-xs sm:text-sm mb-4">총알에 맞고 폭발했습니다!</p>
             
-            <div class="bg-slate-900 border border-pink-500/30 rounded-xl p-4 w-full max-w-xs mb-6 space-y-2">
+            <div class="bg-slate-900 border border-pink-500/30 rounded-xl p-4 w-full max-w-xs mb-4 space-y-2">
                 <div class="flex justify-between items-center text-sm">
                     <span class="text-slate-400">이번 기록:</span>
                     <span id="finalScore" class="pixel-font text-lg text-yellow-300">0.00s</span>
@@ -92,33 +109,34 @@
                 </div>
             </div>
 
+            <!-- Volume Slider Container for GameOver Screen -->
+            <div class="w-full max-w-xs bg-slate-900/90 border border-cyan-500/30 rounded-xl p-3 mb-6 flex flex-col gap-1.5 text-xs text-left shadow-inner">
+                <div class="flex justify-between items-center">
+                    <span class="text-cyan-400 font-bold flex items-center gap-1.5">
+                        🔊 <span class="pixel-font text-[10px]">MASTER VOLUME</span>
+                    </span>
+                    <span id="volumeValueGameOver" class="pixel-font text-yellow-300 text-[10px]">80%</span>
+                </div>
+                <input id="volumeSliderGameOver" type="range" min="0" max="100" value="80" 
+                    class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-pink-500 focus:outline-none">
+            </div>
+
             <button id="restartBtn" class="pixel-font px-6 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white rounded-xl shadow-lg shadow-cyan-500/40 transform active:scale-95 transition-all cursor-pointer">
                 TRY AGAIN
             </button>
         </div>
-
-        <!-- Countdown Overlay -->
-        <div id="countdownOverlay" class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center z-30 hidden">
-            <span id="countdownText" class="pixel-font text-6xl text-yellow-300 neon-text-cyan animate-pulse">3</span>
-        </div>
     </main>
 
-    <!-- Mobile On-Screen Controls Container -->
-    <footer class="w-full max-w-lg mt-2 flex items-center justify-between gap-4 p-2 bg-slate-900/60 border border-slate-800 rounded-xl">
+    <!-- Mobile Touch Controls Area -->
+    <footer class="w-full max-w-lg mt-2 flex items-center justify-between gap-3 p-2 bg-slate-900/60 border border-slate-800 rounded-xl">
         <!-- Virtual Joystick Area -->
-        <div class="relative w-36 h-36 sm:w-40 sm:h-40 bg-slate-950/80 rounded-xl border border-slate-800 flex items-center justify-center overflow-hidden touch-none" id="joystickArea">
-            <!-- Joystick Base -->
-            <div class="w-24 h-24 rounded-full border-2 border-slate-700/60 bg-slate-900/50 flex items-center justify-center relative">
-                <!-- Inner Cross Hair Indicator -->
-                <div class="w-full h-[1px] bg-slate-800 absolute"></div>
-                <div class="h-full w-[1px] bg-slate-800 absolute"></div>
-                <!-- Joystick Knob Handle -->
-                <div id="joystickKnob" class="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400 to-cyan-600 border-2 border-cyan-300 shadow-lg shadow-cyan-500/40 relative transform transition-transform duration-75"></div>
-            </div>
-            <span class="absolute bottom-1 text-[9px] text-slate-500 font-bold tracking-wider uppercase">JOYSTICK</span>
+        <div id="joystickZone" class="relative w-36 h-36 sm:w-40 sm:h-40 bg-slate-950/90 rounded-full border-2 border-cyan-500/40 flex items-center justify-center shadow-inner overflow-hidden touch-none">
+            <div id="joystickBase" class="absolute w-24 h-24 rounded-full border border-cyan-500/20 bg-cyan-950/20 pointer-events-none"></div>
+            <div id="joystickStick" class="absolute w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 border border-white/80 shadow-lg shadow-cyan-500/50 pointer-events-none transition-transform duration-75"></div>
+            <span class="pixel-font text-[9px] text-cyan-500/40 pointer-events-none uppercase">JOYSTICK</span>
         </div>
 
-        <!-- Big Touch Shield Button -->
+        <!-- Shield Button -->
         <button id="btnDodge" class="touch-btn flex-1 h-36 sm:h-40 bg-gradient-to-br from-pink-600 to-purple-700 border-2 border-pink-400 active:from-pink-400 active:to-purple-500 rounded-xl flex flex-col items-center justify-center gap-1 shadow-lg shadow-pink-500/20 cursor-pointer">
             <span class="text-2xl sm:text-3xl">🛡️</span>
             <span class="pixel-font text-xs sm:text-sm text-white font-bold">SHIELD</span>
@@ -134,10 +152,23 @@
                 this.ctx = null;
                 this.bgmTimer = null;
                 this.isPlayingBgm = false;
+                this.masterVolume = 0.8;
+                this.masterGain = null;
             }
             init() {
                 if (!this.ctx) {
                     this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    this.masterGain = this.ctx.createGain();
+                    this.masterGain.gain.value = this.masterVolume;
+                    this.masterGain.connect(this.ctx.destination);
+                } else if (this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            }
+            setVolume(val) {
+                this.masterVolume = Math.max(0, Math.min(1, val));
+                if (this.masterGain && this.ctx) {
+                    this.masterGain.gain.setValueAtTime(this.masterVolume, this.ctx.currentTime);
                 }
             }
             playBeep(freq = 600, duration = 0.15) {
@@ -149,7 +180,7 @@
                 gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + duration);
                 osc.connect(gain);
-                gain.connect(this.ctx.destination);
+                gain.connect(this.masterGain || this.ctx.destination);
                 osc.start();
                 osc.stop(this.ctx.currentTime + duration);
             }
@@ -163,7 +194,7 @@
                 gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.3);
                 osc.connect(gain);
-                gain.connect(this.ctx.destination);
+                gain.connect(this.masterGain || this.ctx.destination);
                 osc.start();
                 osc.stop(this.ctx.currentTime + 0.3);
             }
@@ -172,13 +203,13 @@
                 const osc = this.ctx.createOscillator();
                 const gain = this.ctx.createGain();
                 osc.type = 'triangle';
-                osc.frequency.setValueAtTime(523.25, this.ctx.currentTime); // C5
-                osc.frequency.setValueAtTime(659.25, this.ctx.currentTime + 0.08); // E5
-                osc.frequency.setValueAtTime(783.99, this.ctx.currentTime + 0.16); // G5
+                osc.frequency.setValueAtTime(523.25, this.ctx.currentTime);
+                osc.frequency.setValueAtTime(659.25, this.ctx.currentTime + 0.08);
+                osc.frequency.setValueAtTime(783.99, this.ctx.currentTime + 0.16);
                 gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.3);
                 osc.connect(gain);
-                gain.connect(this.ctx.destination);
+                gain.connect(this.masterGain || this.ctx.destination);
                 osc.start();
                 osc.stop(this.ctx.currentTime + 0.3);
             }
@@ -192,17 +223,15 @@
                 gain.gain.setValueAtTime(0.5, this.ctx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.6);
                 osc.connect(gain);
-                gain.connect(this.ctx.destination);
+                gain.connect(this.masterGain || this.ctx.destination);
                 osc.start();
                 osc.stop(this.ctx.currentTime + 0.6);
             }
 
-            // --- Synthesized BGM Loop ---
             startBGM() {
                 if (!this.ctx || this.isPlayingBgm) return;
                 this.isPlayingBgm = true;
 
-                // Retro Synthwave Melody Pitch Frequency Table
                 const melody = [
                     523.25, 659.25, 783.99, 1046.50, 783.99, 659.25, 523.25, 440.00,
                     493.88, 587.33, 698.46, 880.00,  698.46, 587.33, 493.88, 392.00,
@@ -221,17 +250,15 @@
                     osc.type = (step % 4 === 0) ? 'square' : 'sawtooth';
                     osc.frequency.setValueAtTime(melody[step % melody.length], now);
 
-                    // Volume envelope
                     gain.gain.setValueAtTime(0.08, now);
                     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
 
                     osc.connect(gain);
-                    gain.connect(this.ctx.destination);
+                    gain.connect(this.masterGain || this.ctx.destination);
 
                     osc.start(now);
                     osc.stop(now + 0.14);
 
-                    // Bass/Beat Pulse on every 4th step
                     if (step % 2 === 0) {
                         const bassOsc = this.ctx.createOscillator();
                         const bassGain = this.ctx.createGain();
@@ -240,7 +267,7 @@
                         bassGain.gain.setValueAtTime(0.15, now);
                         bassGain.gain.exponentialRampToValueAtTime(0.01, now + 0.18);
                         bassOsc.connect(bassGain);
-                        bassGain.connect(this.ctx.destination);
+                        bassGain.connect(this.masterGain || this.ctx.destination);
                         bassOsc.start(now);
                         bassOsc.stop(now + 0.18);
                     }
@@ -248,7 +275,7 @@
                     step++;
                 };
 
-                this.bgmTimer = setInterval(playNote, 130); // ~115 BPM
+                this.bgmTimer = setInterval(playNote, 130);
             }
 
             stopBGM() {
@@ -261,6 +288,29 @@
         }
         const audio = new SoundEngine();
 
+        // Volume Slider Setup
+        const volumeSlider = document.getElementById('volumeSlider');
+        const volumeValue = document.getElementById('volumeValue');
+        const volumeSliderGameOver = document.getElementById('volumeSliderGameOver');
+        const volumeValueGameOver = document.getElementById('volumeValueGameOver');
+
+        function handleVolumeChange(val) {
+            if (volumeValue) volumeValue.innerText = `${val}%`;
+            if (volumeValueGameOver) volumeValueGameOver.innerText = `${val}%`;
+            if (volumeSlider) volumeSlider.value = val;
+            if (volumeSliderGameOver) volumeSliderGameOver.value = val;
+            
+            audio.init();
+            audio.setVolume(val / 100);
+        }
+
+        if (volumeSlider) {
+            volumeSlider.addEventListener('input', (e) => handleVolumeChange(parseInt(e.target.value)));
+        }
+        if (volumeSliderGameOver) {
+            volumeSliderGameOver.addEventListener('input', (e) => handleVolumeChange(parseInt(e.target.value)));
+        }
+
         // --- Game Setup & State ---
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
@@ -272,60 +322,53 @@
         const btnDodgeSubText = document.getElementById('btnDodgeSubText');
         
         const startOverlay = document.getElementById('startOverlay');
-        const gameOverOverlay = document.getElementById('gameOverOverlay');
         const countdownOverlay = document.getElementById('countdownOverlay');
         const countdownText = document.getElementById('countdownText');
+        const gameOverOverlay = document.getElementById('gameOverOverlay');
         const startBtn = document.getElementById('startBtn');
         const restartBtn = document.getElementById('restartBtn');
         
         const finalScore = document.getElementById('finalScore');
         const highScoreDisplay = document.getElementById('highScore');
 
-        // Internal Canvas Resolution
         const CANVAS_WIDTH = 500;
         const CANVAS_HEIGHT = 625;
         canvas.width = CANVAS_WIDTH;
         canvas.height = CANVAS_HEIGHT;
 
-        let gameState = 'START'; // START, COUNTDOWN, PLAYING, GAMEOVER
+        let gameState = 'START'; 
         let startTime = 0;
         let elapsedTime = 0;
         let animationFrameId = null;
 
-        // Player Pac-Man Object (Centered)
+        // Pac-Man Player Object
         const player = {
             x: CANVAS_WIDTH / 2,
             y: CANVAS_HEIGHT / 2,
-            radius: 16,
-            speed: 4.5, // 이동 속도 감소 (6.5 -> 4.5)
-            angle: -Math.PI / 2, // Default facing UP
+            radius: 14,
+            width: 28,
+            height: 28,
+            speed: 4.5,
             dodgeCharges: 1,
             isInvincible: false,
-            invincibleUntil: 0
+            invincibleUntil: 0,
+            angle: 0,
+            mouthAngle: 0.2,
+            mouthSpeed: 0.04
         };
 
-        // Inputs State
-        const keys = {
-            Up: false,
-            Down: false,
-            Left: false,
-            Right: false
-        };
+        const keys = { Up: false, Down: false, Left: false, Right: false };
+        let joystickVector = { x: 0, y: 0 };
 
-        // Joystick Input Vector (-1 to 1)
-        const joystickInput = { x: 0, y: 0 };
-
-        // Game Entities
         let bullets = [];
         let particles = [];
         let items = [];
         let spawnTimer = 0;
         let lastItemSpawnTime = 0;
 
-        // High Score
         let highScore = parseFloat(localStorage.getItem('car_dodge_highscore') || '0');
 
-        // --- Input Event Listeners ---
+        // Keyboard Event Listeners
         window.addEventListener('keydown', (e) => {
             if (e.code === 'ArrowUp' || e.code === 'KeyW') keys.Up = true;
             if (e.code === 'ArrowDown' || e.code === 'KeyS') keys.Down = true;
@@ -344,118 +387,70 @@
             if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.Right = false;
         });
 
-        // --- Touch Virtual Joystick Implementation ---
-        const joystickArea = document.getElementById('joystickArea');
-        const joystickKnob = document.getElementById('joystickKnob');
-        let joystickTouchId = null;
+        // Virtual Joystick Controller Logic
+        const joystickZone = document.getElementById('joystickZone');
+        const joystickStick = document.getElementById('joystickStick');
+        let isJoystickActive = false;
 
-        function handleJoystickMove(clientX, clientY) {
-            const rect = joystickArea.getBoundingClientRect();
+        function updateJoystick(evt) {
+            if (!isJoystickActive) return;
+            const rect = joystickZone.getBoundingClientRect();
+            const touch = evt.touches ? evt.touches[0] : evt;
             const centerX = rect.left + rect.width / 2;
             const centerY = rect.top + rect.height / 2;
+            
+            let dx = touch.clientX - centerX;
+            let dy = touch.clientY - centerY;
+            const maxRadius = rect.width / 2 - 20;
+            const distance = Math.hypot(dx, dy);
 
-            let deltaX = clientX - centerX;
-            let deltaY = clientY - centerY;
-            const maxRadius = rect.width * 0.3; // Max drag distance
-
-            const distance = Math.hypot(deltaX, deltaY);
             if (distance > maxRadius) {
-                deltaX = (deltaX / distance) * maxRadius;
-                deltaY = (deltaY / distance) * maxRadius;
+                dx = (dx / distance) * maxRadius;
+                dy = (dy / distance) * maxRadius;
             }
 
-            // Visual Knob Position
-            joystickKnob.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
-
-            // Normalized Velocity Input Vector (-1 to 1) with minor dampening & deadzone for better precision
-            let normX = deltaX / maxRadius;
-            let normY = deltaY / maxRadius;
-            const deadzone = 0.08;
-            if (Math.abs(normX) < deadzone) normX = 0;
-            if (Math.abs(normY) < deadzone) normY = 0;
-
-            joystickInput.x = normX * 0.85; // 감도 85% 수준으로 완화
-            joystickInput.y = normY * 0.85;
+            joystickStick.style.transform = `translate(${dx}px, ${dy}px)`;
+            
+            if (distance > 8) {
+                joystickVector.x = dx / maxRadius;
+                joystickVector.y = dy / maxRadius;
+            } else {
+                joystickVector.x = 0;
+                joystickVector.y = 0;
+            }
         }
 
         function resetJoystick() {
-            joystickTouchId = null;
-            joystickKnob.style.transform = 'translate(0px, 0px)';
-            joystickInput.x = 0;
-            joystickInput.y = 0;
+            isJoystickActive = false;
+            joystickVector = { x: 0, y: 0 };
+            joystickStick.style.transform = `translate(0px, 0px)`;
         }
 
-        // Joystick Event Listeners (Touch & Mouse)
-        joystickArea.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            if (joystickTouchId === null && e.changedTouches.length > 0) {
-                const touch = e.changedTouches[0];
-                joystickTouchId = touch.identifier;
-                handleJoystickMove(touch.clientX, touch.clientY);
-            }
-        });
+        joystickZone.addEventListener('touchstart', (e) => { isJoystickActive = true; updateJoystick(e); });
+        window.addEventListener('touchmove', (e) => { if (isJoystickActive) updateJoystick(e); });
+        window.addEventListener('touchend', resetJoystick);
 
-        window.addEventListener('touchmove', (e) => {
-            if (joystickTouchId !== null) {
-                for (let i = 0; i < e.changedTouches.length; i++) {
-                    if (e.changedTouches[i].identifier === joystickTouchId) {
-                        handleJoystickMove(e.changedTouches[i].clientX, e.changedTouches[i].clientY);
-                        break;
-                    }
-                }
-            }
-        }, { passive: false });
+        joystickZone.addEventListener('mousedown', (e) => { isJoystickActive = true; updateJoystick(e); });
+        window.addEventListener('mousemove', (e) => { if (isJoystickActive) updateJoystick(e); });
+        window.addEventListener('mouseup', resetJoystick);
 
-        window.addEventListener('touchend', (e) => {
-            if (joystickTouchId !== null) {
-                for (let i = 0; i < e.changedTouches.length; i++) {
-                    if (e.changedTouches[i].identifier === joystickTouchId) {
-                        resetJoystick();
-                        break;
-                    }
-                }
-            }
-        });
-
-        // Mouse Dragging support for Joystick testing on desktop
-        let isMouseDownOnJoystick = false;
-        joystickArea.addEventListener('mousedown', (e) => {
-            isMouseDownOnJoystick = true;
-            handleJoystickMove(e.clientX, e.clientY);
-        });
-        window.addEventListener('mousemove', (e) => {
-            if (isMouseDownOnJoystick) {
-                handleJoystickMove(e.clientX, e.clientY);
-            }
-        });
-        window.addEventListener('mouseup', () => {
-            if (isMouseDownOnJoystick) {
-                isMouseDownOnJoystick = false;
-                resetJoystick();
-            }
-        });
-
+        // Shield Button Listener
         document.getElementById('btnDodge').addEventListener('click', (e) => {
             e.preventDefault();
             triggerDodge();
         });
-        document.getElementById('btnDodge').addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            triggerDodge();
-        });
 
-        // Start & Restart Button Listeners
-        startBtn.addEventListener('click', startGame);
-        restartBtn.addEventListener('click', startGame);
+        // Start & Restart Trigger Bindings
+        startBtn.addEventListener('click', startCountdown);
+        restartBtn.addEventListener('click', startCountdown);
 
-        // --- Core Functions ---
         function triggerDodge() {
             if (gameState !== 'PLAYING') return;
             if (player.dodgeCharges <= 0) return;
 
             player.dodgeCharges--;
             player.isInvincible = true;
-            player.invincibleUntil = performance.now() + 1000; // 1 second duration
+            player.invincibleUntil = performance.now() + 1000;
             audio.playDodge();
 
             updateDodgeUI();
@@ -488,34 +483,10 @@
             });
         }
 
-        function startGame() {
+        function startCountdown() {
             audio.init();
             startOverlay.classList.add('hidden');
             gameOverOverlay.classList.add('hidden');
-
-            // Reset player centered
-            player.x = CANVAS_WIDTH / 2;
-            player.y = CANVAS_HEIGHT / 2;
-            player.dodgeCharges = 1;
-            player.isInvincible = false;
-            player.invincibleUntil = 0;
-            player.angle = -Math.PI / 2;
-            
-            bullets = [];
-            particles = [];
-            items = [];
-            spawnTimer = 0;
-            elapsedTime = 0;
-            timerDisplay.innerText = "0.00s";
-
-            updateDodgeUI();
-
-            // Start 3-2-1 Countdown
-            startCountdown();
-        }
-
-        function startCountdown() {
-            gameState = 'COUNTDOWN';
             countdownOverlay.classList.remove('hidden');
 
             let count = 3;
@@ -528,35 +499,46 @@
                     countdownText.innerText = count;
                     audio.playBeep(600, 0.15);
                 } else if (count === 0) {
-                    countdownText.innerText = "GO!";
-                    audio.playBeep(1000, 0.3);
+                    countdownText.innerText = 'GO!';
+                    audio.playBeep(1000, 0.25);
                 } else {
                     clearInterval(interval);
                     countdownOverlay.classList.add('hidden');
-                    
-                    // Actually start playing
-                    gameState = 'PLAYING';
-                    startTime = performance.now();
-                    lastItemSpawnTime = performance.now();
-
-                    // Start Background Music Loop
-                    audio.startBGM();
-
-                    if (animationFrameId) cancelAnimationFrame(animationFrameId);
-                    gameLoop();
+                    startGame();
                 }
             }, 800);
+        }
 
-            // Render static scene during countdown
-            render();
+        function startGame() {
+            gameState = 'PLAYING';
+            startTime = performance.now();
+            elapsedTime = 0;
+            lastItemSpawnTime = performance.now();
+            
+            player.x = CANVAS_WIDTH / 2;
+            player.y = CANVAS_HEIGHT / 2;
+            player.dodgeCharges = 1;
+            player.isInvincible = false;
+            player.invincibleUntil = 0;
+            player.angle = 0;
+            
+            bullets = [];
+            particles = [];
+            items = [];
+            spawnTimer = 0;
+
+            updateDodgeUI();
+            audio.startBGM();
+
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            gameLoop();
         }
 
         function gameOver() {
             gameState = 'GAMEOVER';
-            audio.stopBGM(); // Stop music immediately on game over
+            audio.stopBGM();
             audio.playExplosion();
 
-            // Create explosion particles at player position
             for (let i = 0; i < 40; i++) {
                 particles.push({
                     x: player.x,
@@ -564,13 +546,12 @@
                     vx: (Math.random() - 0.5) * 12,
                     vy: (Math.random() - 0.5) * 12,
                     radius: Math.random() * 4 + 2,
-                    color: ['#facc15', '#ef4444', '#f97316', '#ffffff'][Math.floor(Math.random() * 4)],
+                    color: ['#ef4444', '#f97316', '#eab308', '#ffffff'][Math.floor(Math.random() * 4)],
                     alpha: 1,
                     life: Math.random() * 30 + 20
                 });
             }
 
-            // Save High Score
             if (elapsedTime > highScore) {
                 highScore = elapsedTime;
                 localStorage.setItem('car_dodge_highscore', highScore.toFixed(2));
@@ -584,7 +565,6 @@
             }, 600);
         }
 
-        // --- Game Logic Update ---
         function update(deltaTime) {
             if (gameState !== 'PLAYING') return;
 
@@ -592,58 +572,57 @@
             elapsedTime = (now - startTime) / 1000;
             timerDisplay.innerText = `${elapsedTime.toFixed(2)}s`;
 
-            // Check Shield Item Spawn Every 10 Seconds
             if (now - lastItemSpawnTime >= 10000) {
                 lastItemSpawnTime = now;
                 spawnShieldItem();
             }
 
-            // Check Invincibility Expiry
             if (player.isInvincible && now > player.invincibleUntil) {
                 player.isInvincible = false;
             }
 
-            // Player Movement (Combined Keyboard & Joystick Input)
-            let dx = joystickInput.x;
-            let dy = joystickInput.y;
+            let dx = 0;
+            let dy = 0;
 
-            // Keyboard overrides/adds if keys are active
-            if (keys.Left) dx = -1;
-            if (keys.Right) dx = 1;
-            if (keys.Up) dy = -1;
-            if (keys.Down) dy = 1;
+            if (Math.abs(joystickVector.x) > 0.05 || Math.abs(joystickVector.y) > 0.05) {
+                dx = joystickVector.x;
+                dy = joystickVector.y;
+            } else {
+                if (keys.Left) dx -= 1;
+                if (keys.Right) dx += 1;
+                if (keys.Up) dy -= 1;
+                if (keys.Down) dy += 1;
 
-            // Normalize Keyboard diagonal movement speed
-            if ((keys.Left || keys.Right) && (keys.Up || keys.Down)) {
-                dx *= 0.7071;
-                dy *= 0.7071;
+                if (dx !== 0 && dy !== 0) {
+                    dx *= 0.7071;
+                    dy *= 0.7071;
+                }
             }
 
-            // Update facing angle based on movement direction
-            if (Math.abs(dx) > 0.1 || Math.abs(dy) > 0.1) {
+            if (dx !== 0 || dy !== 0) {
                 player.angle = Math.atan2(dy, dx);
+                player.mouthAngle += player.mouthSpeed;
+                if (player.mouthAngle > 0.35 || player.mouthAngle < 0.05) {
+                    player.mouthSpeed = -player.mouthSpeed;
+                }
             }
 
             player.x += dx * player.speed;
             player.y += dy * player.speed;
 
-            // Clamp player within boundaries
             player.x = Math.max(player.radius, Math.min(CANVAS_WIDTH - player.radius, player.x));
             player.y = Math.max(player.radius, Math.min(CANVAS_HEIGHT - player.radius, player.y));
 
-            // --- Items Collection Logic ---
             for (let i = items.length - 1; i >= 0; i--) {
                 const it = items[i];
                 const distSq = (player.x - it.x) ** 2 + (player.y - it.y) ** 2;
                 const collectionRadius = player.radius + it.radius;
                 
-                // Collect item
                 if (distSq <= collectionRadius ** 2) {
                     player.dodgeCharges++;
                     audio.playItem();
                     updateDodgeUI();
                     
-                    // Floating pickup particle effect
                     for (let p = 0; p < 12; p++) {
                         particles.push({
                             x: it.x,
@@ -659,8 +638,7 @@
                     items.splice(i, 1);
                 }
             }
-            // --- DIFFICULTY SCALING (Smooth initial curve) ---
-            // 초반 속도 증가 곡선을 조금 부드럽게 조정
+
             const speedMultiplier = 1 + (elapsedTime / 22) ** 1.4;
             const spawnInterval = Math.max(4, 25 - Math.floor(elapsedTime * 0.3));
 
@@ -670,28 +648,28 @@
                 
                 const side = Math.floor(Math.random() * 4);
                 let bx, by, bvx, bvy;
-                const baseSpeed = (Math.random() * 1.8 + 2.2) * speedMultiplier; // 초기 총알 속도 감소 (3.5+2.5 -> 2.2+1.8)
+                const baseSpeed = (Math.random() * 2.0 + 2.5) * speedMultiplier;
 
                 if (side === 0) {
                     bx = Math.random() * CANVAS_WIDTH;
                     by = -15;
-                    bvx = (Math.random() - 0.5) * 2 * speedMultiplier;
+                    bvx = (Math.random() - 0.5) * 2.5 * speedMultiplier;
                     bvy = baseSpeed;
                 } else if (side === 1) {
                     bx = Math.random() * CANVAS_WIDTH;
                     by = CANVAS_HEIGHT + 15;
-                    bvx = (Math.random() - 0.5) * 2 * speedMultiplier;
+                    bvx = (Math.random() - 0.5) * 2.5 * speedMultiplier;
                     bvy = -baseSpeed;
                 } else if (side === 2) {
                     bx = -15;
                     by = Math.random() * CANVAS_HEIGHT;
                     bvx = baseSpeed;
-                    bvy = (Math.random() - 0.5) * 2 * speedMultiplier;
+                    bvy = (Math.random() - 0.5) * 2.5 * speedMultiplier;
                 } else {
                     bx = CANVAS_WIDTH + 15;
                     by = Math.random() * CANVAS_HEIGHT;
                     bvx = -baseSpeed;
-                    bvy = (Math.random() - 0.5) * 2 * speedMultiplier;
+                    bvy = (Math.random() - 0.5) * 2.5 * speedMultiplier;
                 }
 
                 bullets.push({
@@ -704,29 +682,25 @@
                 });
             }
 
-            // Update Bullets & Collisions
             for (let i = bullets.length - 1; i >= 0; i--) {
                 const b = bullets[i];
                 b.x += b.vx;
                 b.y += b.vy;
 
-                // Collision Detection with Pac-Man
                 if (!player.isInvincible) {
-                    const distSq = (player.x - b.x) ** 2 + (player.y - b.y) ** 2;
-                    const hitRadius = player.radius * 0.8 + b.radius;
+                    const distSq = (b.x - player.x) ** 2 + (b.y - player.y) ** 2;
+                    const hitRadius = player.radius + b.radius - 3;
                     if (distSq < hitRadius ** 2) {
                         gameOver();
                         break;
                     }
                 }
 
-                // Remove out of bounds bullets
                 if (b.y > CANVAS_HEIGHT + 30 || b.y < -30 || b.x < -30 || b.x > CANVAS_WIDTH + 30) {
                     bullets.splice(i, 1);
                 }
             }
 
-            // Update Explosions & Particles
             for (let i = particles.length - 1; i >= 0; i--) {
                 const p = particles[i];
                 p.x += p.vx;
@@ -736,7 +710,6 @@
             }
         }
 
-        // --- Helper Function: Draw Shield Item ---
         function drawShieldItem(x, y, radius) {
             ctx.save();
             ctx.translate(x, y);
@@ -772,13 +745,10 @@
             ctx.restore();
         }
 
-        // --- Rendering Engine ---
         function render() {
-            // Clear Screen
             ctx.fillStyle = '#090d16';
             ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-            // Draw Synthwave Grid
             ctx.strokeStyle = '#1e293b';
             ctx.lineWidth = 1;
             const gridOffset = (performance.now() * 0.15) % 40;
@@ -789,10 +759,8 @@
                 ctx.stroke();
             }
 
-            // Draw Shield Items
             items.forEach(it => drawShieldItem(it.x, it.y, it.radius));
 
-            // Draw Bullets
             bullets.forEach(b => {
                 ctx.save();
                 ctx.beginPath();
@@ -804,15 +772,13 @@
                 ctx.restore();
             });
 
-            // Draw Player Pac-Man (if not game over)
             if (gameState === 'PLAYING') {
                 ctx.save();
                 ctx.translate(player.x, player.y);
 
-                // Invincibility Shield Effect
                 if (player.isInvincible) {
                     ctx.beginPath();
-                    ctx.arc(0, 0, 26, 0, Math.PI * 2);
+                    ctx.arc(0, 0, player.radius + 12, 0, Math.PI * 2);
                     ctx.fillStyle = 'rgba(236, 72, 153, 0.25)';
                     ctx.strokeStyle = '#ec4899';
                     ctx.lineWidth = 3;
@@ -822,32 +788,25 @@
                     ctx.stroke();
                 }
 
-                // Pac-Man Mouth Animation Calculation
-                const mouthSpeed = 0.015;
-                const mouthAngle = (Math.sin(performance.now() * mouthSpeed) + 1) * 0.2 + 0.05;
-
-                // Rotate Pac-Man to facing direction
                 ctx.rotate(player.angle);
 
-                // Draw Pac-Man Body
                 ctx.beginPath();
-                ctx.arc(0, 0, player.radius, mouthAngle, Math.PI * 2 - mouthAngle);
+                ctx.arc(0, 0, player.radius, player.mouthAngle * Math.PI, (2 - player.mouthAngle) * Math.PI);
                 ctx.lineTo(0, 0);
-                ctx.fillStyle = '#facc15'; // Yellow
+                ctx.closePath();
+                ctx.fillStyle = '#facc15';
                 ctx.shadowColor = '#facc15';
-                ctx.shadowBlur = 12;
+                ctx.shadowBlur = 10;
                 ctx.fill();
 
-                // Pac-Man Eye
                 ctx.beginPath();
-                ctx.arc(3, -player.radius * 0.55, 2.5, 0, Math.PI * 2);
-                ctx.fillStyle = '#0f172a';
+                ctx.arc(2, -player.radius * 0.5, 2.5, 0, Math.PI * 2);
+                ctx.fillStyle = '#000000';
                 ctx.fill();
 
                 ctx.restore();
             }
 
-            // Draw Particles
             particles.forEach(p => {
                 ctx.save();
                 ctx.globalAlpha = Math.max(0, p.alpha);
@@ -859,7 +818,6 @@
             });
         }
 
-        // --- Main Loop ---
         let lastTime = performance.now();
         function gameLoop() {
             const now = performance.now();
@@ -874,7 +832,6 @@
             }
         }
 
-        // Initial Canvas Draw
         render();
     </script>
 </body>
