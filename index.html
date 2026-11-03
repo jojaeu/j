@@ -133,6 +133,8 @@
         class SoundEngine {
             constructor() {
                 this.ctx = null;
+                this.bgmTimer = null;
+                this.isPlayingBgm = false;
             }
             init() {
                 if (!this.ctx) {
@@ -194,6 +196,68 @@
                 gain.connect(this.ctx.destination);
                 osc.start();
                 osc.stop(this.ctx.currentTime + 0.6);
+            }
+
+            // --- Synthesized BGM Loop ---
+            startBGM() {
+                if (!this.ctx || this.isPlayingBgm) return;
+                this.isPlayingBgm = true;
+
+                // Retro Synthwave Melody Pitch Frequency Table
+                const melody = [
+                    523.25, 659.25, 783.99, 1046.50, 783.99, 659.25, 523.25, 440.00,
+                    493.88, 587.33, 698.46, 880.00,  698.46, 587.33, 493.88, 392.00,
+                    440.00, 523.25, 659.25, 783.99,  659.25, 523.25, 440.00, 349.23,
+                    392.00, 493.88, 587.33, 698.46,  587.33, 493.88, 392.00, 523.25
+                ];
+                let step = 0;
+
+                const playNote = () => {
+                    if (!this.isPlayingBgm || !this.ctx) return;
+
+                    const now = this.ctx.currentTime;
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+
+                    osc.type = (step % 4 === 0) ? 'square' : 'sawtooth';
+                    osc.frequency.setValueAtTime(melody[step % melody.length], now);
+
+                    // Volume envelope
+                    gain.gain.setValueAtTime(0.08, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+
+                    osc.start(now);
+                    osc.stop(now + 0.14);
+
+                    // Bass/Beat Pulse on every 4th step
+                    if (step % 2 === 0) {
+                        const bassOsc = this.ctx.createOscillator();
+                        const bassGain = this.ctx.createGain();
+                        bassOsc.type = 'triangle';
+                        bassOsc.frequency.setValueAtTime(step % 8 === 0 ? 110 : 87.31, now);
+                        bassGain.gain.setValueAtTime(0.15, now);
+                        bassGain.gain.exponentialRampToValueAtTime(0.01, now + 0.18);
+                        bassOsc.connect(bassGain);
+                        bassGain.connect(this.ctx.destination);
+                        bassOsc.start(now);
+                        bassOsc.stop(now + 0.18);
+                    }
+
+                    step++;
+                };
+
+                this.bgmTimer = setInterval(playNote, 130); // ~115 BPM
+            }
+
+            stopBGM() {
+                this.isPlayingBgm = false;
+                if (this.bgmTimer) {
+                    clearInterval(this.bgmTimer);
+                    this.bgmTimer = null;
+                }
             }
         }
         const audio = new SoundEngine();
@@ -476,6 +540,9 @@
                     startTime = performance.now();
                     lastItemSpawnTime = performance.now();
 
+                    // Start Background Music Loop
+                    audio.startBGM();
+
                     if (animationFrameId) cancelAnimationFrame(animationFrameId);
                     gameLoop();
                 }
@@ -487,6 +554,7 @@
 
         function gameOver() {
             gameState = 'GAMEOVER';
+            audio.stopBGM(); // Stop music immediately on game over
             audio.playExplosion();
 
             // Create explosion particles at player position
